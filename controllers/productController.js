@@ -1,0 +1,23 @@
+import Product from '../models/Product.js';
+export const createProduct = async (req,res) => {
+  try { res.json(await Product.create(req.body)); }
+  catch(e){ res.status(500).json({error:e.message}); }
+};
+export const getProducts = async (req,res) => {
+  try { 
+    const p = await Product.find()
+      .populate('vendor')
+      .populate('category')
+      .populate('subcategory');
+    res.json(p);
+  } catch(e){ res.status(500).json({error:e.message}); }
+};
+export const getProductsByVendor = async (req,res) => {
+  try {
+    const p = await Product.find({vendor:req.params.vendorId})
+      .populate('vendor')
+      .populate('category')
+      .populate('subcategory');
+    res.json(p);
+  } catch(e){ res.status(500).json({error:e.message}); }
+};
