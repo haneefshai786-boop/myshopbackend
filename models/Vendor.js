@@ -2,8 +2,15 @@ import mongoose from 'mongoose';
 
 const vendorSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  description: { type: String },
-  type: { type: String, required: true }, // NEW: e.g., "Restaurant" or "Grocery"
+  description: String,
+
+  // 🔥 ADD THIS
+  type: {
+    type: String,
+    enum: ['restaurant', 'grocery'],
+    required: true
+  },
+
   createdAt: { type: Date, default: Date.now }
 });
 
