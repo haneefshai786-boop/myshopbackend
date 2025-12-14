@@ -1,29 +1,42 @@
 import express from 'express';
-import { adminAuth } from '../middleware/adminAuth.js';
+import adminAuth from '../middleware/adminAuth.js';
 import Order from '../models/Order.js';
 
 const router = express.Router();
 
-// Admin fetch all orders
-router.get('/', adminAuth, async (req, res) => {
+/* USER – place order (NO auth, as you wanted earlier) */
+router.post('/', async (req, res) => {
   try {
-    const orders = await Order.find().populate('items.product');
-    res.json(orders);
+    const order = new Order(req.body);
+    await order.save();
+    res.json(order);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch orders' });
+    res.status(500).json({ message: 'Order failed' });
   }
 });
 
-// User place order
-router.post('/', async (req, res) => {
-  const { items, total } = req.body;
-  if (!items || !items.length) return res.status(400).json({ message: 'Cart empty' });
-
+/* ADMIN – get all orders */
+router.get('/', adminAuth, async (req, res) => {
   try {
-    const newOrder = await Order.create({ items, total, createdAt: new Date() });
-    res.json(newOrder);
-  } catch (err) {
-    res.status(500).json({ message: 'Order failed' });
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json(orders);
+  } catch {
+    res.status(500).json({ message: 'Failed to load orders' });
+  }
+});
+
+/* ADMIN – update order status */
+router.put('/:id/status', adminAuth, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    res.json(order);
+  } catch {
+    res.status(500).json({ message: 'Failed to update order' });
   }
 });
 
