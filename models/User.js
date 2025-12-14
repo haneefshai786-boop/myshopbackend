@@ -11,13 +11,22 @@ const userSchema = new mongoose.Schema({
 // Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+
+  // Check if password is already hashed (starts with $2)
+  if (!this.password.startsWith('$2')) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
   next();
 });
 
-// Method to compare password
+// Compare password method
 userSchema.methods.comparePassword = async function(password) {
+  // If stored password is not hashed, hash it first
+  if (!this.password.startsWith('$2')) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
   return await bcrypt.compare(password, this.password);
 };
 
