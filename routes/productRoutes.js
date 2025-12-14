@@ -1,7 +1,12 @@
+// routes/productRoutes.js
 import express from 'express';
-import { createProduct, getProducts, getProductsByVendor } from '../controllers/productController.js';
+import { getProductById, getAllProducts } from '../controllers/productController.js';
 const router = express.Router();
-router.post('/', createProduct);
-router.get('/', getProducts);
-router.get('/vendor/:vendorId', getProductsByVendor);
+
+// Get all products
+router.get('/', getAllProducts);
+
+// Get single product by ID
+router.get('/:productId', getProductById);
+
 export default router;
