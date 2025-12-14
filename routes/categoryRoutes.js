@@ -1,6 +1,12 @@
-import express from 'express';
-import { getCategoriesByVendor, createCategory } from '../controllers/categoryController.js';
+
+import express from "express";
+import { addCategory, getCategoriesByVendor, updateCategory, deleteCategory } from "../controllers/categoryController.js";
+
 const router = express.Router();
-router.get('/vendor/:vendorId', getCategoriesByVendor);
-router.post('/', createCategory);
+
+router.get("/vendor/:vendorId", getCategoriesByVendor);
+router.post("/", addCategory);
+router.put("/:id", updateCategory);
+router.delete("/:id", deleteCategory); // make sure this exists
+
 export default router;
