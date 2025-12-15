@@ -10,6 +10,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import subcategoryRoutes from './routes/subcategoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import userOrderRoutes from "./routes/userOrderRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/subcategories', subcategoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use("/uploads", express.static("uploads"));
+app.use("/api/orders", userOrderRoutes);
 
 app.get('/api/health', (req,res)=>res.json({ok:true}));
 
