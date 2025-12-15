@@ -1,16 +1,25 @@
+
+// controllers/userOrderController.js
 import UserOrder from "../models/UserOrder.js";
+import Product from "../models/Product.js";
 
-export const createOrder = async (req, res) => {
-  const { products } = req.body;
-  if (!products || products.length === 0) {
-    return res.status(400).json({ message: "Cart is empty" });
-  }
-
+export const createUserOrder = async (req, res) => {
   try {
-    const order = await UserOrder.create({
-      user: req.user._id, // from token middleware
-      products
-    });
+    const userId = req.user._id;
+    const { products } = req.body;
+
+    if (!products || !products.length) {
+      return res.status(400).json({ message: "Cart is empty" });
+    }
+
+    let total = 0;
+    for (const item of products) {
+      const prod = await Product.findById(item.product);
+      if (!prod) return res.status(404).json({ message: "Product not found" });
+      total += prod.price * item.qty;
+    }
+
+    const order = await UserOrder.create({ user: userId, products, totalPrice: total });
     res.status(201).json(order);
   } catch (err) {
     console.error(err);
