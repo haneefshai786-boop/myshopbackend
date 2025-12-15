@@ -4,8 +4,10 @@ import { createUserOrder, getUserOrders } from "../controllers/userOrderControll
 
 const router = express.Router();
 
-// Only authenticated users can access
+// User can create order
 router.post("/", userAuth, createUserOrder);
+
+// User can fetch all their orders
 router.get("/", userAuth, getUserOrders);
 
 export default router;
