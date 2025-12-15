@@ -1,28 +1,27 @@
-import UserOrder from '../models/UserOrder.js';
-
-export const getUserOrders = async (req, res) => {
-  try {
-    const orders = await UserOrder.find({ user: req.user._id })
-      .populate('products.product', 'name price')
-      .sort({ createdAt: -1 });
-    res.json(orders);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to load orders' });
-  }
-};
+// src/controllers/userOrderController.js
+import Order from "../models/UserOrder.js"; // separate order schema for users
 
 export const createOrder = async (req, res) => {
   try {
-    const { products, total } = req.body;
-    const order = await UserOrder.create({
+    const { items, total } = req.body;
+    const order = await Order.create({
       user: req.user._id,
-      products,
+      items,
       total,
     });
     res.status(201).json(order);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Failed to place order' });
+    res.status(500).json({ message: "Failed to create order" });
+  }
+};
+
+export const getUserOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user._id }).populate("items.product");
+    res.json(orders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch orders" });
   }
 };
