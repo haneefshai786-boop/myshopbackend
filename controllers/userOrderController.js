@@ -1,10 +1,13 @@
-import UserOrder from "../models/UserOrder.js";
-import Product from "../models/Product.js";
 
-// Create user order
+import UserOrder from "../models/UserOrder.js";
+
+// Create a new order
 export const createUserOrder = async (req, res) => {
   try {
     const { products, totalPrice, address, paymentMethod } = req.body;
+
+    if (!products || products.length === 0)
+      return res.status(400).json({ message: "Cart is empty" });
 
     const order = await UserOrder.create({
       user: req.user._id,
@@ -21,12 +24,12 @@ export const createUserOrder = async (req, res) => {
   }
 };
 
-// Get orders of logged-in user
+// Get all orders of logged-in user
 export const getUserOrders = async (req, res) => {
   try {
     const orders = await UserOrder.find({ user: req.user._id })
-      .populate("products.product", "name price image")
-      .sort({ createdAt: -1 });
+      .populate("products.product", "name price");
+
     res.json(orders);
   } catch (err) {
     console.error(err);
