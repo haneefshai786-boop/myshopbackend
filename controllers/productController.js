@@ -4,14 +4,16 @@ import Product from "../models/Product.js";
 export const createProduct = async (req, res) => {
   try {
     const { name, price, vendor, category, subcategory } = req.body;
+
     const product = await Product.create({
       name,
       price,
       vendor,
       category,
       subcategory,
-      image: req.file?.path || "",
+      image: req.file ? `/uploads/${req.file.filename}` : ""
     });
+
     res.status(201).json(product);
   } catch (err) {
     console.error(err);
@@ -19,37 +21,32 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const getProducts = async (req, res) => {
+export const getProducts = async (_req, res) => {
   try {
     const products = await Product.find()
       .populate("vendor", "name")
       .populate("category", "name")
       .populate("subcategory", "name");
+
     res.json(products);
-  } catch (err) {
-    console.error(err);
+  } catch {
     res.status(500).json({ message: "Failed to load products" });
   }
 };
 
 export const updateProduct = async (req, res) => {
   try {
-    const { name, price, vendor, category, subcategory } = req.body;
     const updated = await Product.findByIdAndUpdate(
       req.params.id,
       {
-        name,
-        price,
-        vendor,
-        category,
-        subcategory,
-        ...(req.file && { image: req.file.path }),
+        ...req.body,
+        ...(req.file && { image: `/uploads/${req.file.filename}` })
       },
       { new: true }
     );
+
     res.json(updated);
-  } catch (err) {
-    console.error(err);
+  } catch {
     res.status(500).json({ message: "Failed to update product" });
   }
 };
@@ -58,8 +55,7 @@ export const deleteProduct = async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.json({ message: "Product deleted" });
-  } catch (err) {
-    console.error(err);
+  } catch {
     res.status(500).json({ message: "Failed to delete product" });
   }
 };
