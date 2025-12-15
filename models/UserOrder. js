@@ -1,19 +1,22 @@
-// src/models/UserOrder.js
+
 import mongoose from "mongoose";
 
 const userOrderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    items: [
+    products: [
       {
-        product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-        qty: { type: Number, required: true },
-        price: { type: Number, required: true }
-      }
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        qty: { type: Number, default: 1 },
+      },
     ],
-    total: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    status: { type: String, default: "Pending" },
+    address: { type: String, required: true },
+    paymentMethod: { type: String, default: "COD" },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("UserOrder", userOrderSchema);
+const UserOrder = mongoose.model("UserOrder", userOrderSchema);
+export default UserOrder;
