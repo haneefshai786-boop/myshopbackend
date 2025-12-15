@@ -24,6 +24,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/subcategories', subcategoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use("/uploads", express.static("uploads"));
 
 app.get('/api/health', (req,res)=>res.json({ok:true}));
 
