@@ -1,0 +1,21 @@
+import mongoose from "mongoose";
+
+const userOrderSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    products: [
+      {
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        qty: { type: Number, default: 1 },
+      },
+    ],
+    totalPrice: { type: Number, required: true },
+    status: { type: String, default: "Pending" },
+    address: { type: String, required: true },
+    paymentMethod: { type: String, default: "COD" },
+  },
+  { timestamps: true }
+);
+
+const UserOrder = mongoose.model("UserOrder", userOrderSchema);
+export default UserOrder;
